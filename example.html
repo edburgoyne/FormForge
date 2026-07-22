@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- tells the browther to parse everything as modern html -->
+<html> <!-- root node, everything lives inside of it -->
+    <head> <!-- holds metadata not shown on the page (title, links, CSS) -->
+
+    </head>
+    <body> <!-- holds everything visable -->
+        <h1> <!-- goes h1 - h6. It's hierachy, not font-size picker. Don't skip -->
+            <p> <!-- paragraph --> 
+                <ul> <!-- unordered/bulleted list -->
+                    <li> <!-- only child allowed to either ul or ol. -->
+                    </li>
+                </ul>
+                <ol> <!-- ordered/numbered list -->
+                </ol>
+            </p>
+        </h1>
+    </body>
+</html>
+
+
+<!-- an HTML element has up to three parts:
+ 
+<tagname attribute="value">content</tagname>
+
+    tagname: what kind of element (p, section, input)
+
+    attributes: key/value pair inside the opening tag. Gives the browser or JS extra information about only this instance of the element (is unique to this element).
+inside angle brackets, always the opening tag only. always name="value". Largely for machines
+
+    Content: whatever is between the opening and closing tag. Some tags such as <input> have no content and no closing tag. Largely for humans
+ 
+
+attributes:
+
+universal attrubutes:
+    id=".." : unique to one element. Cannot repeat
+    class=".." : Can be repeated, used for CSS styling
+    style=".." : apply CSS directly on the element. Generally avoided, but can be useful
+    hidden : no ="value". 
+
+tag-specific attributes:
+    <a href=".."> : where a link goes. meaningless on a <p>
+    <img src="..." alt="..."> : src is the image file path, alt is fallback tet. Meaningless on a <div>
+    <input type="..." placeholder="..." required> : type changes the type of input, required means that an input is required
+
+
+Form Elements:
+    <input> : self-closing. example: <input type="text" placeholder="Enter your answer">. "text" type means the input will be text. "radio" type means it has a "pick one" behavior. Placeholder is the grey helpful text.
+    required can also be included
+      
+    <button> has content, but does nothing else except be clickable. defaults to type="submit"
+
+    <select> + <option> : this is a dropdown. Option can only live inside select. 
+
+    <label> : text content, links to an input's id. clicking label text focuses the input text
+      
+ -->
