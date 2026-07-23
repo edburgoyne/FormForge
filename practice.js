@@ -11,7 +11,7 @@ let questions = stored ? JSON.parse(stored) : [
     {
         id: "q2",
         title: "Pick your favorite color",
-        description: "",
+        description: "What is your favorite color?",
         type: "multiple-choice",
         required: false,
         options: ["Red", "Blue", "Green", "Yellow"]
@@ -36,6 +36,13 @@ function isValid(question) {
     return true
 }
 
+function moveQuestion(questions, index, direction) {
+    const newIndex = index + direction;   // direction: -1 for up, +1 for down
+    if (newIndex < 0 || newIndex >= questions.length) return;   // out of bounds, do nothing
+
+    [questions[index], questions[newIndex]] = [questions[newIndex], questions[index]];
+}
+
 
 function renderInputField(labelText, value="") {
     const field = document.createElement("div");
@@ -55,11 +62,11 @@ function renderInputField(labelText, value="") {
 
 
 function renderOptions(qOptions) {
-    const myOptions = document.createElement("ol");
+    const myOptions = document.createElement("ul");
     qOptions.forEach((o, index) => {
         const option = document.createElement("li");
         option.className = "field-row"
-        option.appendChild(renderInputField(`Option ${index + 1}: ${o}`));
+        option.appendChild(renderInputField(`Option ${index + 1}:`, o));
         myOptions.appendChild(option);
     })
     return myOptions
@@ -67,10 +74,10 @@ function renderOptions(qOptions) {
 
 
 function renderViewOptions(qOptions) {
-    const myOptions = document.createElement("ol");
+    const myOptions = document.createElement("ul");
     qOptions.forEach((o, index) => {
         const option = document.createElement("li");
-        option.textContent = `Option ${index + 1}`, o
+        option.textContent = `Option ${index + 1}: ${o}`
         myOptions.appendChild(option);
     })
     return myOptions
@@ -235,6 +242,17 @@ function renderQuestions(questions) {
                 const block = document.createElement("div");
                 block.className = "question-block";
 
+
+                const upButton = document.createElement("button")
+                upButton.textContent = "^"
+                upButton.className = "move-button"
+                upButton.addEventListener("click", () => {
+                    moveQuestion(questions, index, -1)
+                    renderQuestions(questions)
+                    renderNewQuestion(questions)
+                })
+
+
                 const heading = document.createElement("p");
                 const headingEditField = renderInputField("Question Title:", q.title);
                 heading.appendChild(headingEditField);
@@ -253,6 +271,12 @@ function renderQuestions(questions) {
                 submitButton.textContent = "Save";
                 submitButton.addEventListener("click", () => {
                     // assign new values FIRST, so validation checks what's actually about to be saved
+                    const oldTitle = q.title;
+                    const oldDescription = q.description;
+                    const oldRequired = q.required;
+                    if (q.type === "multiple-choice") {
+                        const oldChoices = q.options;
+                    }
                     q.title = headingEditField.querySelector("input").value;
                     q.description = questionEditField.querySelector("input").value;
                     q.required = requiredBox.querySelector("input").checked;
@@ -265,7 +289,13 @@ function renderQuestions(questions) {
                         q.options = parsedOptions;
                     }
 
-                    if (isValid(q) !== true) return;
+                    if (isValid(q) !== true) {
+                        q.title = oldTitle;
+                        q.description = oldDescription;
+                        q.required = oldRequired;
+                        if (q.type === "multiple-choice") q.options = oldChoices;
+                        return;
+                    }
 
                     editID = null;
                     renderQuestions(questions);
@@ -281,17 +311,37 @@ function renderQuestions(questions) {
                     renderNewQuestion(questions);
                 });
 
+                const downButton = document.createElement("button")
+                downButton.textContent = "v"
+                downButton.className = "move-button"
+                downButton.addEventListener("click", () => {
+                    moveQuestion(questions, index, 1)
+                    renderQuestions(questions)
+                    renderNewQuestion(questions)
+                })
+
+                block.appendChild(upButton)
                 block.appendChild(heading);
                 block.appendChild(questionText);
                 if (q.type === "multiple-choice") block.appendChild(optionsField);
                 block.appendChild(requiredBox);
                 block.appendChild(submitButton);
                 block.appendChild(cancelButton);
+                block.appendChild(downButton)
 
                 document.body.appendChild(block);
             } else {
                 const block = document.createElement("div");
                 block.className = "question-block";
+
+                const upButton = document.createElement("button")
+                upButton.textContent = "^"
+                upButton.className = "move-button"
+                upButton.addEventListener("click", () => {
+                    moveQuestion(questions, index, -1)
+                    renderQuestions(questions)
+                    renderNewQuestion(questions)
+                })
 
                 const heading = document.createElement("h1");
                 heading.textContent = q.title;
@@ -310,11 +360,22 @@ function renderQuestions(questions) {
                     renderQuestions(questions);
                 });
 
+                const downButton = document.createElement("button")
+                downButton.textContent = "v"
+                downButton.className = "move-button"
+                downButton.addEventListener("click", () => {
+                    moveQuestion(questions, index, 1)
+                    renderQuestions(questions)
+                    renderNewQuestion(questions)
+                })
+
+                block.appendChild(upButton)
                 block.appendChild(heading);
                 block.appendChild(questionText);
                 if (q.type === "multiple-choice") block.appendChild(renderViewOptions(q.options));
                 block.appendChild(requiredBox);
                 block.appendChild(editButton);
+                block.appendChild(downButton)
 
                 document.body.appendChild(block);
             }
